@@ -13,21 +13,19 @@
             Console.WriteLine("We will generate random array with items not larger 99, sort it and find a border.");
             Console.Write("Insert the length of array: ");
             var lengthOfArray = Console.ReadLine();
-            WriteAnInputArray(GenerateRandomArray(int.Parse(lengthOfArray)));
-        }    
-        
-        
-
-        long[] firstExampleArray = new long[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-        long[] secondExampleArray = new long[] { 1, 2, 3, 4, 6, 10, 13, 14, 15 };
-        long[] thirdExampleArray = new long[] { 1, 2, 3, 4, 6, 10, 20, 30, 33, 35, 40 };
-        long firstExampleNumber = 2;
-        long secondExampleNumber = 13;
-        long thirdExampleNumber = 4;
-
-        Console.WriteLine(FindLeftBorder(firstExampleArray, firstExampleNumber));
-        Console.WriteLine(FindLeftBorder(secondExampleArray, secondExampleNumber));
-        Console.WriteLine(FindLeftBorder(thirdExampleArray, thirdExampleNumber));
+            var array = GenerateRandomArray(int.Parse(lengthOfArray));
+            WriteAnInputArray(array);
+            Console.Write("Now insert a number your want to work with: ");
+            var number = Console.ReadLine();
+            Console.Write("And L for left border or R for riht border want to find: ");
+            var border = Console.ReadLine();
+            var result = FindBorder(array, int.Parse(number), char.Parse(border));
+            if (result == -1)
+            {
+                Console.WriteLine("Something went wrong! Lets try again!");   
+            }
+            else Console.WriteLine(result);
+        };
     }
 
     public static int[] GenerateRandomArray(int lengthOfArray)
@@ -43,19 +41,36 @@
 
     public static void WriteAnInputArray(int[] inputArray)
     {
-        foreach (var item in inputArray)
+        for (int i = 0; i < inputArray.Length; i++)
         {
-            Console.Write("{0} ", item);
+            Console.Write("{0} - {1} ", i, inputArray[i]);
+            Console.WriteLine();
         }
+
         Console.WriteLine();
     }
 
-    public static int FindLeftBorder(long[] arr, long value)
+    public static int FindBorder(int[] arr, int value, char border)
     {
-        return BinSearchLeftBorder(arr, value, -1, arr.Length);
+
+        if (border == 'R' || border == 'r') return BinSearchRightBorder(arr, value, -1, arr.Length);
+        else if (border == 'L' || border == 'l') return BinSearchLeftBorder(arr, value, -1, arr.Length);
+        else return -1;
+
     }
 
-    public static int BinSearchLeftBorder(long[] array, long value, int left, int right)
+    public static int BinSearchRightBorder(int[] array, long value, int left, int right)
+    {
+        if (array.Length == 0) return -1;
+        if (array[right - 1] <= value) return right + 1;
+        if (array[left + 1] > value) return left;
+        var m = (left + right) / 2;
+        if (array[m] < value)
+            return BinSearchRightBorder(array, value, m, right);
+        return BinSearchRightBorder(array, value, left, m);
+    }
+
+    public static int BinSearchLeftBorder(int[] array, long value, int left, int right)
     {
         if (array.Length == 0) return -1;
         if (array[right - 1] < value) return right - 1;
